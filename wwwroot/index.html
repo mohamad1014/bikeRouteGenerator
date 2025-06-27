@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bike Route Generator</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+          integrity="sha256-sA+5KdM+Ybl9gPz19Yld/PhsixPHk4FoS0C4s+4T/P8="
+          crossorigin=""/>
+    <style>
+        #map { height: 600px; }
+        #controls { margin: 20px; }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <label for="distance">Distance (km):</label>
+        <input type="number" id="distance" placeholder="Enter distance" min="1" value="10"/>
+        <button id="generate">Generate Route</button>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-oR81AXkK4efQlCkpDADPg9y3/58CFChQQvZ0/on+R2w="
+        crossorigin=""></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        // Add OSM tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Handle route generation
+        document.getElementById('generate').addEventListener('click', function() {
+            var distance = document.getElementById('distance').value;
+            fetch('/api/route?distance=' + distance)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        alert(data.message);
+                        // TODO: Implement route drawing on the map.
+                    } else {
+                        alert('Failed to generate route');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
